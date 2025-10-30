@@ -75,19 +75,22 @@ BEFORE UPDATE ON batches
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
 
--- Users table
+-- Users table (with password for local auth)
 CREATE TABLE users (
   user_id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   email VARCHAR(100) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
   role user_role NOT NULL DEFAULT 'field_worker',
   phone VARCHAR(20),
+  is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_users_role ON users(role);
 CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_active ON users(is_active);
 
 CREATE TRIGGER update_users_updated_at
 BEFORE UPDATE ON users
@@ -117,6 +120,7 @@ CREATE TABLE beds (
   in_charge INTEGER,
   capacity INTEGER CHECK (capacity IS NULL OR capacity > 0),
   current_occupancy INTEGER DEFAULT 0 CHECK (current_occupancy >= 0),
+  qr_code TEXT UNIQUE,
   notes TEXT,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -129,6 +133,7 @@ CREATE TABLE beds (
 CREATE INDEX idx_beds_category ON beds(species_category);
 CREATE INDEX idx_beds_location ON beds(location_id);
 CREATE INDEX idx_beds_in_charge ON beds(in_charge);
+CREATE INDEX idx_beds_qr_code ON beds(qr_code);
 
 CREATE TRIGGER update_beds_updated_at
 BEFORE UPDATE ON beds
@@ -153,13 +158,54 @@ CREATE TABLE batch_bed_assignments (
 CREATE INDEX idx_assignments_batch ON batch_bed_assignments(batch_id);
 CREATE INDEX idx_assignments_bed ON batch_bed_assignments(bed_id);
 
+-- Bed Tasks table (defines what tasks need to be done for beds)
+CREATE TABLE bed_tasks (
+  task_id SERIAL PRIMARY KEY,
+  task_name VARCHAR(200) NOT NULL,
+  task_description TEXT,
+  is_default BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert default bed tasks
+INSERT INTO bed_tasks (task_name, task_description, is_default) VALUES
+  ('Watering', 'Check soil moisture and water seedlings as needed', TRUE),
+  ('Weeding', 'Remove weeds and unwanted vegetation from the bed', TRUE),
+  ('Pest Check', 'Inspect plants for pests and diseases', TRUE),
+  ('Fertilizing', 'Apply fertilizer according to plant needs', TRUE),
+  ('Shading Check', 'Ensure proper shade coverage for seedlings', TRUE);
+
+-- Daily Bed Task Completions table
+CREATE TABLE daily_task_completions (
+  completion_id SERIAL PRIMARY KEY,
+  bed_id INTEGER NOT NULL,
+  task_id INTEGER NOT NULL,
+  completed_by INTEGER NOT NULL,
+  completion_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  completion_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  photo_url TEXT,
+  notes TEXT,
+  gps_latitude DECIMAL(10, 8),
+  gps_longitude DECIMAL(11, 8),
+  
+  CONSTRAINT fk_completion_bed FOREIGN KEY (bed_id) REFERENCES beds(bed_id) ON DELETE CASCADE,
+  CONSTRAINT fk_completion_task FOREIGN KEY (task_id) REFERENCES bed_tasks(task_id) ON DELETE CASCADE,
+  CONSTRAINT fk_completion_user FOREIGN KEY (completed_by) REFERENCES users(user_id) ON DELETE CASCADE,
+  CONSTRAINT uq_daily_completion UNIQUE (bed_id, task_id, completion_date)
+);
+
+CREATE INDEX idx_completions_bed ON daily_task_completions(bed_id);
+CREATE INDEX idx_completions_date ON daily_task_completions(completion_date DESC);
+CREATE INDEX idx_completions_user ON daily_task_completions(completed_by);
+
 -- Insert sample data for testing
 
--- Sample Users
-INSERT INTO users (name, email, role, phone) VALUES
-  ('Juan Dela Cruz', 'juan@smartseed.com', 'field_worker', '09171234567'),
-  ('Maria Santos', 'maria@smartseed.com', 'field_worker', '09187654321'),
-  ('Pedro Reyes', 'pedro@smartseed.com', 'admin', '09191234567');
+-- Sample Users (password: 'password123' for all - CHANGE IN PRODUCTION!)
+-- Note: In production, use proper password hashing (bcrypt)
+INSERT INTO users (name, email, password_hash, role, phone) VALUES
+  ('Admin User', 'admin@smartseed.com', '$2a$10$rKzDMOKKQJ8LhS9VEqxBJOU7EQ3YqJxV9xKhLZPXqGqYGzYgYqKYe', 'admin', '09191234567'),
+  ('Juan Dela Cruz', 'juan@smartseed.com', '$2a$10$rKzDMOKKQJ8LhS9VEqxBJOU7EQ3YqJxV9xKhLZPXqGqYGzYgYqKYe', 'field_worker', '09171234567'),
+  ('Maria Santos', 'maria@smartseed.com', '$2a$10$rKzDMOKKQJ8LhS9VEqxBJOU7EQ3YqJxV9xKhLZPXqGqYGzYgYqKYe', 'field_worker', '09187654321');
 
 -- Sample Locations
 INSERT INTO locations (location_name, description) VALUES
@@ -167,12 +213,12 @@ INSERT INTO locations (location_name, description) VALUES
   ('Greenhouse B', 'Secondary greenhouse for fruit trees'),
   ('Outdoor Area C', 'Open area for ornamental plants');
 
--- Sample Beds
-INSERT INTO beds (bed_name, location_id, species_category, in_charge, capacity, notes) VALUES
-  ('Bed A-1', 1, 'Forestry', 1, 1000, 'Primary bed for native tree seedlings'),
-  ('Bed A-2', 1, 'Forestry', 2, 1000, 'Secondary bed for hardwood species'),
-  ('Bed B-1', 2, 'Fruit Tree', 1, 800, 'Mango and citrus varieties'),
-  ('Bed C-1', 3, 'Ornamental', 2, 500, 'Flowering plants and decorative species');
+-- Sample Beds (with unique QR codes)
+INSERT INTO beds (bed_name, location_id, species_category, in_charge, capacity, qr_code, notes) VALUES
+  ('Bed A-1', 1, 'Forestry', 2, 1000, 'BED-A1-QR2024', 'Primary bed for native tree seedlings'),
+  ('Bed A-2', 1, 'Forestry', 3, 1000, 'BED-A2-QR2024', 'Secondary bed for hardwood species'),
+  ('Bed B-1', 2, 'Fruit Tree', 2, 800, 'BED-B1-QR2024', 'Mango and citrus varieties'),
+  ('Bed C-1', 3, 'Ornamental', 3, 500, 'BED-C1-QR2024', 'Flowering plants and decorative species');
 
 -- Sample Batches
 INSERT INTO batches (batch_id, source_location, wildlings_count, notes, person_in_charge)

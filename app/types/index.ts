@@ -1,6 +1,6 @@
 // SmartSeed TypeScript Type Definitions
 
-export type UserRole = 'nursery_staff' | 'cenro' | 'admin';
+export type UserRole = 'admin' | 'field_worker' | 'cenro' | 'nursery_staff';
 
 export interface User {
   id: string;

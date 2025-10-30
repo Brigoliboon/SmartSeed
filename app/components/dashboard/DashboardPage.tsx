@@ -5,9 +5,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Badge } from '../ui/badge';
 import { Activity, Package, AlertCircle, CheckCircle, TrendingUp } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { InventoryStats, SensorData } from '../../types';
+import { InventoryStats, SensorData, User } from '../../types';
+import { FieldWorkerDashboard } from './FieldWorkerDashboard';
 
-export function DashboardPage() {
+interface DashboardPageProps {
+  user: User;
+}
+
+export function DashboardPage({ user }: DashboardPageProps) {
+  // Show field worker dashboard for field workers
+  if (user.role === 'field_worker') {
+    return <FieldWorkerDashboard userId={parseInt(user.id)} />;
+  }
+
+  // Admin dashboard below
   const [stats, setStats] = useState<InventoryStats>({
     total_batches: 42,
     total_plants: 15678,

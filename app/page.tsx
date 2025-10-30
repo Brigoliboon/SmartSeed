@@ -7,6 +7,7 @@ import { SignupForm } from './components/auth/SignupForm';
 import { AppSidebar } from './components/layout/AppSidebar';
 import { DashboardPage } from './components/dashboard/DashboardPage';
 import { InventoryPage } from './components/inventory/InventoryPage';
+import { BedsPage } from './components/beds/BedsPage';
 import { ScanningPage } from './components/scanning/ScanningPage';
 import { AlertsPage } from './components/alerts/AlertsPage';
 import { SettingsPage } from './components/settings/SettingsPage';
@@ -63,9 +64,10 @@ export default function App() {
       {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto">
         <div className="container mx-auto p-6 max-w-7xl">
-          {currentPage === 'dashboard' && <DashboardPage />}
+          {currentPage === 'dashboard' && <DashboardPage user={user} />}
           {currentPage === 'inventory' && <InventoryPage />}
-          {currentPage === 'scanning' && <ScanningPage />}
+          {currentPage === 'beds' && <BedsPage />}
+          {currentPage === 'scanning' && <ScanningPage user={user} />}
           {currentPage === 'alerts' && <AlertsPage />}
           {currentPage === 'settings' && <SettingsPage user={user} />}
         </div>
