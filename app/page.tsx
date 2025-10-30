@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect } from 'react';
 import { useAuth } from './hooks/useAuth';
 import { LoginForm } from './components/auth/LoginForm';
@@ -30,7 +32,7 @@ export default function App() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-        <div className="w-full">
+        <div className="flex justify-center w-full">
           {authMode === 'login' ? (
             <LoginForm
               onLogin={signIn}
