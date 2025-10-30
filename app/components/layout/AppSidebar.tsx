@@ -1,4 +1,4 @@
-import { LayoutDashboard, Package, ScanLine, Bell, Settings, LogOut, Sprout } from 'lucide-react';
+import { LayoutDashboard, Package, Layers, ScanLine, Bell, Settings, LogOut, Sprout } from 'lucide-react';
 import { User } from '../../types';
 
 interface AppSidebarProps {
@@ -9,13 +9,22 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ currentPage, onNavigate, user, onSignOut }: AppSidebarProps) {
-  const menuItems = [
+  // Different menu items based on user role
+  const adminMenuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'inventory', label: 'Inventory', icon: Package },
-    { id: 'scanning', label: 'AI Scanner', icon: ScanLine },
+    { id: 'beds', label: 'Plant Beds', icon: Layers },
+    { id: 'scanning', label: 'QR Scanner', icon: ScanLine },
     { id: 'alerts', label: 'Alerts', icon: Bell },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
+
+  const fieldWorkerMenuItems = [
+    { id: 'dashboard', label: 'My Beds', icon: LayoutDashboard },
+    { id: 'scanning', label: 'Scan QR Code', icon: ScanLine },
+  ];
+
+  const menuItems = user.role === 'field_worker' ? fieldWorkerMenuItems : adminMenuItems;
 
   return (
     <div className="w-64 h-screen bg-sidebar text-sidebar-foreground flex flex-col">
