@@ -14,7 +14,7 @@ export function AppSidebar({ currentPage, onNavigate, user, onSignOut }: AppSide
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'inventory', label: 'Inventory', icon: Package },
     { id: 'beds', label: 'Plant Beds', icon: Layers },
-    { id: 'scanning', label: 'QR Scanner', icon: ScanLine },
+    { id: 'qr', label: 'QR Codes', icon: ScanLine },
     { id: 'alerts', label: 'Alerts', icon: Bell },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];

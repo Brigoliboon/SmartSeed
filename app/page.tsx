@@ -9,6 +9,7 @@ import { DashboardPage } from './components/dashboard/DashboardPage';
 import { InventoryPage } from './components/inventory/InventoryPage';
 import { BedsPage } from './components/beds/BedsPage';
 import { ScanningPage } from './components/scanning/ScanningPage';
+import { QRManagementPage } from './components/qr/QRManagementPage';
 import { AlertsPage } from './components/alerts/AlertsPage';
 import { SettingsPage } from './components/settings/SettingsPage';
 
@@ -67,6 +68,7 @@ export default function App() {
           {currentPage === 'dashboard' && <DashboardPage user={user} />}
           {currentPage === 'inventory' && <InventoryPage />}
           {currentPage === 'beds' && <BedsPage />}
+          {currentPage === 'qr' && <QRManagementPage />}
           {currentPage === 'scanning' && <ScanningPage user={user} />}
           {currentPage === 'alerts' && <AlertsPage />}
           {currentPage === 'settings' && <SettingsPage user={user} />}

@@ -6,6 +6,7 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const assignedTo = searchParams.get('assignedTo');
+    const qrCode = searchParams.get('qrCode');
 
     let query = `
       SELECT 
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
         l.location_name,
         b.species_category,
         b.qr_code,
-        u.name as person_in_charge,
+        u.name as person_in_charge_name,
         u.user_id as in_charge_id,
         b.capacity,
         b.current_occupancy,
@@ -35,10 +36,20 @@ export async function GET(request: NextRequest) {
     `;
 
     const params: any[] = [];
+    const conditions: string[] = [];
     
     if (assignedTo) {
-      query += ` WHERE b.in_charge = $1`;
+      conditions.push(`b.in_charge = $${params.length + 1}`);
       params.push(parseInt(assignedTo));
+    }
+
+    if (qrCode) {
+      conditions.push(`b.qr_code = $${params.length + 1}`);
+      params.push(qrCode);
+    }
+
+    if (conditions.length > 0) {
+      query += ` WHERE ${conditions.join(' AND ')}`;
     }
 
     query += ` ORDER BY b.bed_id`;
