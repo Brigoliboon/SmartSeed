@@ -34,7 +34,7 @@ export function ScanningPage({ user }: ScanningPageProps = {}) {
     pgUser = {
       user_id: 2,
       name: 'Juan Dela Cruz',
-      email: 'juan@smartseed.com',
+      email: 'juan@Smartseed.com',
       role: 'field_worker'
     };
   }

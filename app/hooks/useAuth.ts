@@ -25,7 +25,7 @@ export function useAuth(): AuthState {
   async function checkUser() {
     try {
       // Check localStorage for existing session
-      const storedUser = localStorage.getItem('smartseed_user');
+      const storedUser = localStorage.getItem('Smartseed_user');
       if (storedUser) {
         const user = JSON.parse(storedUser);
         setUser(user);
@@ -61,7 +61,7 @@ export function useAuth(): AuthState {
         };
         
         setUser(user);
-        localStorage.setItem('smartseed_user', JSON.stringify(user));
+        localStorage.setItem('Smartseed_user', JSON.stringify(user));
         return { success: true };
       } else {
         return { success: false, error: data.message || 'Invalid credentials' };
@@ -87,7 +87,7 @@ export function useAuth(): AuthState {
 
       if (response.ok && data.user) {
         setUser(data.user);
-        localStorage.setItem('smartseed_user', JSON.stringify(data.user));
+        localStorage.setItem('Smartseed_user', JSON.stringify(data.user));
         return { success: true };
       } else {
         return { success: false, error: data.error || 'Sign up failed' };
@@ -100,7 +100,7 @@ export function useAuth(): AuthState {
 
   async function signOut() {
     setUser(null);
-    localStorage.removeItem('smartseed_user');
+    localStorage.removeItem('Smartseed_user');
   }
 
   return { user, loading, signIn, signUp, signOut };

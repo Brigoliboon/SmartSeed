@@ -39,7 +39,7 @@ export function LoginForm({ onLogin, onSwitchToSignup }: LoginFormProps) {
             <Sprout className="w-8 h-8 text-primary" />
           </div>
         </div>
-        <CardTitle>Welcome to SmartSeed</CardTitle>
+        <CardTitle>Welcome to Smartseed</CardTitle>
         <CardDescription>Sign in to manage your nursery operations</CardDescription>
       </CardHeader>
       <CardContent>

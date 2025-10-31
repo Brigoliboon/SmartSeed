@@ -159,7 +159,7 @@ export default function TaskChecklistPage() {
                 <Sprout className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold">SmartSeed Nursery</h1>
+                <h1 className="text-2xl font-bold">Smartseed Nursery</h1>
                 <p className="text-sm text-muted-foreground">Daily Task Checklist</p>
               </div>
             </div>
@@ -341,7 +341,7 @@ export default function TaskChecklistPage() {
         {/* Footer */}
         <Card className="bg-muted/50">
           <CardContent className="pt-4 pb-4 text-center text-sm text-muted-foreground">
-            <p>🌱 SmartSeed Nursery Management System</p>
+            <p>🌱 Smartseed Nursery Management System</p>
             <p className="text-xs mt-1">{new Date().toLocaleDateString()}</p>
           </CardContent>
         </Card>

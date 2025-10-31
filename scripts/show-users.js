@@ -14,7 +14,7 @@ async function showUsers() {
       'SELECT user_id, name, email, role FROM users ORDER BY user_id'
     );
     
-    console.log('\n=== SMARTSEED LOGIN CREDENTIALS ===\n');
+    console.log('\n=== Smartseed LOGIN CREDENTIALS ===\n');
     
     result.rows.forEach(user => {
       console.log(`👤 ${user.name} (${user.role})`);

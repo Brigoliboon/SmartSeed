@@ -20,7 +20,7 @@ export function QRManagementPage() {
   const [loading, setLoading] = useState(true);
   const [generatingQR, setGeneratingQR] = useState<string | null>(null);
   const [selectedBed, setSelectedBed] = useState<Bed | null>(null);
-  const [qrImage, setQrImage] = useState<string>('');
+  const [qrImage, setQrImage] = useState<string>('/qrcode.png');
   const [targetUrl, setTargetUrl] = useState<string>('');
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export function QRManagementPage() {
       const data = await response.json();
 
       if (data.success) {
-        setQrImage(data.qrCodeImage);
+        setQrImage('/qrcode.png'); // Temporarily set to placeholder
         setTargetUrl(data.targetUrl);
       }
     } catch (error) {

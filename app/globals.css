@@ -4,7 +4,7 @@
 :root {
   --font-size: 16px;
   
-  /* SmartSeed Brand Colors */
+  /* Smartseed Brand Colors */
   --sage-garden: #C8BA7E;
   --rusted-terra: #CB6843;
   --olive-grove: #4E5026;
@@ -201,4 +201,62 @@
 
 html {
   font-size: var(--font-size);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  /* Make QR scanner full width on mobile */
+  #qr-reader {
+    width: 100% !important;
+  }
+  
+  #qr-reader video {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 0.5rem;
+  }
+  
+  /* Improve touch targets */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Better mobile card spacing */
+  .space-y-3 > * + * {
+    margin-top: 0.75rem;
+  }
+  
+  /* Smooth scrolling for horizontal lists */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+  
+  /* Hide scrollbar but keep functionality */
+  .overflow-x-auto::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .overflow-x-auto {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Prevent zoom on double tap for iOS */
+@media (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

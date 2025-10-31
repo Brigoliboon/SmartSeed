@@ -1,4 +1,4 @@
-// SmartSeed TypeScript Type Definitions
+// Smartseed TypeScript Type Definitions
 
 export type UserRole = 'admin' | 'field_worker' | 'cenro' | 'nursery_staff';
 

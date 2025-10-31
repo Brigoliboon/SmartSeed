@@ -49,7 +49,7 @@ export function SignupForm({ onSignup, onSwitchToLogin }: SignupFormProps) {
           </div>
         </div>
         <CardTitle>Create Your Account</CardTitle>
-        <CardDescription>Join SmartSeed to start managing your nursery</CardDescription>
+        <CardDescription>Join Smartseed to start managing your nursery</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">

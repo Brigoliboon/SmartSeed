@@ -1,7 +1,7 @@
--- SmartSeed Nursery Database Schema
+-- Smartseed Nursery Database Schema
 
 -- Create database (run this separately if database doesn't exist)
--- CREATE DATABASE smartseed;
+-- CREATE DATABASE Smartseed;
 
 -- Drop tables if exists (for development)
 DROP TABLE IF EXISTS batch_bed_assignments CASCADE;
@@ -203,9 +203,9 @@ CREATE INDEX idx_completions_user ON daily_task_completions(completed_by);
 -- Sample Users (password: 'password123' for all - CHANGE IN PRODUCTION!)
 -- Note: In production, use proper password hashing (bcrypt)
 INSERT INTO users (name, email, password_hash, role, phone) VALUES
-  ('Admin User', 'admin@smartseed.com', '$2a$10$rKzDMOKKQJ8LhS9VEqxBJOU7EQ3YqJxV9xKhLZPXqGqYGzYgYqKYe', 'admin', '09191234567'),
-  ('Juan Dela Cruz', 'juan@smartseed.com', '$2a$10$rKzDMOKKQJ8LhS9VEqxBJOU7EQ3YqJxV9xKhLZPXqGqYGzYgYqKYe', 'field_worker', '09171234567'),
-  ('Maria Santos', 'maria@smartseed.com', '$2a$10$rKzDMOKKQJ8LhS9VEqxBJOU7EQ3YqJxV9xKhLZPXqGqYGzYgYqKYe', 'field_worker', '09187654321');
+  ('Admin User', 'admin@Smartseed.com', '$2a$10$rKzDMOKKQJ8LhS9VEqxBJOU7EQ3YqJxV9xKhLZPXqGqYGzYgYqKYe', 'admin', '09191234567'),
+  ('Juan Dela Cruz', 'juan@Smartseed.com', '$2a$10$rKzDMOKKQJ8LhS9VEqxBJOU7EQ3YqJxV9xKhLZPXqGqYGzYgYqKYe', 'field_worker', '09171234567'),
+  ('Maria Santos', 'maria@Smartseed.com', '$2a$10$rKzDMOKKQJ8LhS9VEqxBJOU7EQ3YqJxV9xKhLZPXqGqYGzYgYqKYe', 'field_worker', '09187654321');
 
 -- Sample Locations
 INSERT INTO locations (location_name, description) VALUES

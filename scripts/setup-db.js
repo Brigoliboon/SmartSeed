@@ -20,12 +20,12 @@ async function setupDatabase() {
 
     // Check if database exists
     const dbCheck = await client.query(
-      "SELECT 1 FROM pg_database WHERE datname = 'smartseed'"
+      "SELECT 1 FROM pg_database WHERE datname = 'Smartseed'"
     );
 
     if (dbCheck.rows.length === 0) {
-      console.log('📦 Creating smartseed database...');
-      await client.query('CREATE DATABASE smartseed');
+      console.log('📦 Creating Smartseed database...');
+      await client.query('CREATE DATABASE Smartseed');
       console.log('✅ Database created');
     } else {
       console.log('✅ Database already exists');
@@ -33,31 +33,31 @@ async function setupDatabase() {
 
     client.release();
 
-    // Connect to smartseed database
-    const smartseedPool = new Pool({
+    // Connect to Smartseed database
+    const SmartseedPool = new Pool({
       user: 'postgres',
       host: 'localhost',
-      database: 'smartseed',
+      database: 'Smartseed',
       password: '319722195',
       port: 5432,
     });
 
-    const smartseedClient = await smartseedPool.connect();
+    const SmartseedClient = await SmartseedPool.connect();
 
     // Read and execute schema.sql
     const schemaPath = path.join(__dirname, '../database/schema.sql');
     const schemaSql = fs.readFileSync(schemaPath, 'utf8');
 
     console.log('📋 Executing schema...');
-    await smartseedClient.query(schemaSql);
+    await SmartseedClient.query(schemaSql);
     console.log('✅ Schema created successfully');
 
     // Verify setup
-    const result = await smartseedClient.query('SELECT COUNT(*) FROM batches');
+    const result = await SmartseedClient.query('SELECT COUNT(*) FROM batches');
     console.log(`✅ Database setup complete! Found ${result.rows[0].count} sample batches.`);
 
-    smartseedClient.release();
-    await smartseedPool.end();
+    SmartseedClient.release();
+    await SmartseedPool.end();
     await pool.end();
 
     process.exit(0);
