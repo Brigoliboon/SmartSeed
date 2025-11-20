@@ -32,7 +32,7 @@ export function AppSidebar({ currentPage, onNavigate, user, onSignOut }: AppSide
       <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-sidebar-primary flex items-center justify-center">
-            <img src="/Smartseed.png" alt="Smartseed Logo" className="w-full h-full object-contain" />
+            <img src="/logo.png" alt="Smartseed Logo" className="w-full h-full object-contain" />
           </div>
           <div>
             <h1 className="text-xl">Smartseed</h1>

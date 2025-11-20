@@ -1,8 +1,16 @@
 "use client"
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
 import { Activity, Package, Users, ClipboardList, Sprout, TrendingUp } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { InventoryStats, SensorData, User } from '../../types';
@@ -13,6 +21,8 @@ interface DashboardPageProps {
 }
 
 export function DashboardPage({ user }: DashboardPageProps) {
+  const router = useRouter();
+
   // Show field worker dashboard for field workers
   if (user.role === 'field_worker') {
     return <FieldWorkerDashboard userId={parseInt(user.id)} />;
@@ -126,6 +136,8 @@ export function DashboardPage({ user }: DashboardPageProps) {
       icon: Users,
       trend: '+23 new this month',
       color: 'text-blue-600',
+      clickable: true,
+      onClick: () => router.push('/beneficiaries'),
     },
     {
       title: 'Pending Requests',
@@ -133,6 +145,8 @@ export function DashboardPage({ user }: DashboardPageProps) {
       icon: ClipboardList,
       trend: 'Awaiting approval',
       color: 'text-orange-600',
+      clickable: true,
+      onClick: () => router.push('/requests'),
     },
     {
       title: 'Growing Plants',
@@ -140,6 +154,8 @@ export function DashboardPage({ user }: DashboardPageProps) {
       icon: Sprout,
       trend: '+8% from last month',
       color: 'text-green-600',
+      clickable: true,
+      onClick: () => router.push('/plants'),
     },
     {
       title: 'Ready for Distribution',
@@ -147,6 +163,8 @@ export function DashboardPage({ user }: DashboardPageProps) {
       icon: TrendingUp,
       trend: '+15% from last week',
       color: 'text-primary',
+      clickable: true,
+      onClick: () => router.push('/distribution'),
     },
     {
       title: 'Total Batches',
@@ -154,6 +172,7 @@ export function DashboardPage({ user }: DashboardPageProps) {
       icon: Package,
       trend: '+12% from last month',
       color: 'text-chart-1',
+      clickable: false,
     },
   ];
 
@@ -165,26 +184,197 @@ export function DashboardPage({ user }: DashboardPageProps) {
         <p className="text-muted-foreground">Monitor your nursery operations in real-time</p>
       </div>
 
-      {/* Stats Grid - Horizontal Scroll */}
-      <div className="overflow-x-auto pb-4 -mx-6 px-6">
-        <div className="flex gap-4 min-w-max">
-          {statCards.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <Card key={stat.title} className="min-w-[280px]">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm">{stat.title}</CardTitle>
-                  <Icon className={`w-4 h-4 ${stat.color}`} />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl mb-1">{stat.value}</div>
-                  <p className="text-xs text-muted-foreground">{stat.trend}</p>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+      {/* Stats Grid - Responsive */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+        {statCards.map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <Card 
+              key={stat.title} 
+              className={stat.clickable ? 'cursor-pointer hover:shadow-lg transition-shadow' : ''}
+              onClick={stat.clickable ? stat.onClick : undefined}
+            >
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm">{stat.title}</CardTitle>
+                <Icon className={`w-4 h-4 ${stat.color}`} />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl mb-1">{stat.value}</div>
+                <p className="text-xs text-muted-foreground">{stat.trend}</p>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
+
+      {/* Nursery Locations Map */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Nursery Locations</CardTitle>
+              <CardDescription>Geographic distribution of nursery beds and sites</CardDescription>
+            </div>
+            <Select defaultValue="all">
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Select location" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Locations</SelectItem>
+                <SelectItem value="north">North Section</SelectItem>
+                <SelectItem value="south">South Section</SelectItem>
+                <SelectItem value="east">East Greenhouse</SelectItem>
+                <SelectItem value="west">West Field</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="relative w-full h-[400px] bg-muted rounded-lg overflow-hidden">
+            {/* Realistic Map Layout */}
+            <div className="absolute inset-0">
+              <div className="relative w-full h-full bg-[#E5E3DF] dark:bg-gray-800">
+                {/* Map road/path lines */}
+                <svg className="absolute inset-0 w-full h-full opacity-40">
+                  {/* Horizontal roads */}
+                  <line x1="0" y1="30%" x2="100%" y2="30%" stroke="#B8B5A9" strokeWidth="3" />
+                  <line x1="0" y1="50%" x2="100%" y2="50%" stroke="#B8B5A9" strokeWidth="4" />
+                  <line x1="0" y1="70%" x2="100%" y2="70%" stroke="#B8B5A9" strokeWidth="3" />
+                  {/* Vertical roads */}
+                  <line x1="25%" y1="0" x2="25%" y2="100%" stroke="#B8B5A9" strokeWidth="3" />
+                  <line x1="50%" y1="0" x2="50%" y2="100%" stroke="#B8B5A9" strokeWidth="4" />
+                  <line x1="75%" y1="0" x2="75%" y2="100%" stroke="#B8B5A9" strokeWidth="3" />
+                </svg>
+
+                {/* Green areas (fields/gardens) */}
+                <div className="absolute top-[15%] left-[10%] w-32 h-24 bg-green-200/40 dark:bg-green-900/30 rounded" />
+                <div className="absolute top-[55%] left-[28%] w-40 h-32 bg-green-300/40 dark:bg-green-800/30 rounded" />
+                <div className="absolute top-[25%] left-[60%] w-36 h-28 bg-green-200/40 dark:bg-green-900/30 rounded" />
+                <div className="absolute top-[40%] left-[5%] w-28 h-24 bg-green-300/40 dark:bg-green-800/30 rounded" />
+                
+                {/* Water/pond areas */}
+                <div className="absolute top-[75%] right-[15%] w-24 h-20 bg-blue-200/50 dark:bg-blue-900/30 rounded-full" />
+                
+                {/* Location markers with pin/pointer icons */}
+                <div className="absolute top-[25%] left-[30%] flex flex-col items-center group cursor-pointer">
+                  {/* Pin icon SVG */}
+                  <svg width="40" height="50" viewBox="0 0 24 30" className="drop-shadow-lg hover:scale-110 transition-transform">
+                    <path d="M12 0C7.589 0 4 3.589 4 8c0 5.5 8 14 8 14s8-8.5 8-14c0-4.411-3.589-8-8-8z" fill="#22c55e" />
+                    <circle cx="12" cy="8" r="3" fill="white" />
+                  </svg>
+                  <div className="mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Badge className="bg-white dark:bg-gray-900 text-black dark:text-white shadow-lg border">North Section</Badge>
+                    <div className="text-xs text-center mt-1 bg-white/90 dark:bg-gray-900/90 px-2 py-1 rounded shadow">
+                      14.5995°N, 121.0857°E
+                    </div>
+                  </div>
+                </div>
+
+                <div className="absolute top-[60%] left-[35%] flex flex-col items-center group cursor-pointer">
+                  {/* Pin icon SVG */}
+                  <svg width="40" height="50" viewBox="0 0 24 30" className="drop-shadow-lg hover:scale-110 transition-transform">
+                    <path d="M12 0C7.589 0 4 3.589 4 8c0 5.5 8 14 8 14s8-8.5 8-14c0-4.411-3.589-8-8-8z" fill="#f97316" />
+                    <circle cx="12" cy="8" r="3" fill="white" />
+                  </svg>
+                  <div className="mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Badge className="bg-white dark:bg-gray-900 text-black dark:text-white shadow-lg border">South Section</Badge>
+                    <div className="text-xs text-center mt-1 bg-white/90 dark:bg-gray-900/90 px-2 py-1 rounded shadow">
+                      14.5992°N, 121.0855°E
+                    </div>
+                  </div>
+                </div>
+
+                <div className="absolute top-[35%] left-[65%] flex flex-col items-center group cursor-pointer">
+                  {/* Pin icon SVG */}
+                  <svg width="40" height="50" viewBox="0 0 24 30" className="drop-shadow-lg hover:scale-110 transition-transform">
+                    <path d="M12 0C7.589 0 4 3.589 4 8c0 5.5 8 14 8 14s8-8.5 8-14c0-4.411-3.589-8-8-8z" fill="#a855f7" />
+                    <circle cx="12" cy="8" r="3" fill="white" />
+                  </svg>
+                  <div className="mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Badge className="bg-white dark:bg-gray-900 text-black dark:text-white shadow-lg border">East Greenhouse</Badge>
+                    <div className="text-xs text-center mt-1 bg-white/90 dark:bg-gray-900/90 px-2 py-1 rounded shadow">
+                      14.5997°N, 121.0862°E
+                    </div>
+                  </div>
+                </div>
+
+                <div className="absolute top-[50%] left-[20%] flex flex-col items-center group cursor-pointer">
+                  {/* Pin icon SVG */}
+                  <svg width="40" height="50" viewBox="0 0 24 30" className="drop-shadow-lg hover:scale-110 transition-transform">
+                    <path d="M12 0C7.589 0 4 3.589 4 8c0 5.5 8 14 8 14s8-8.5 8-14c0-4.411-3.589-8-8-8z" fill="#3b82f6" />
+                    <circle cx="12" cy="8" r="3" fill="white" />
+                  </svg>
+                  <div className="mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Badge className="bg-white dark:bg-gray-900 text-black dark:text-white shadow-lg border">West Field</Badge>
+                    <div className="text-xs text-center mt-1 bg-white/90 dark:bg-gray-900/90 px-2 py-1 rounded shadow">
+                      14.5990°N, 121.0850°E
+                    </div>
+                  </div>
+                </div>
+
+                {/* Compass Rose */}
+                <div className="absolute top-4 left-4 w-16 h-16 opacity-60">
+                  <svg viewBox="0 0 100 100" className="w-full h-full">
+                    <circle cx="50" cy="50" r="45" fill="white" stroke="#333" strokeWidth="2" opacity="0.9"/>
+                    <text x="50" y="20" textAnchor="middle" fontSize="16" fontWeight="bold" fill="#333">N</text>
+                    <text x="50" y="88" textAnchor="middle" fontSize="12" fill="#666">S</text>
+                    <text x="88" y="55" textAnchor="middle" fontSize="12" fill="#666">E</text>
+                    <text x="12" y="55" textAnchor="middle" fontSize="12" fill="#666">W</text>
+                    <path d="M 50 15 L 55 50 L 50 50 Z" fill="#e11d48"/>
+                    <path d="M 50 85 L 45 50 L 50 50 Z" fill="#666"/>
+                  </svg>
+                </div>
+
+                {/* Scale indicator */}
+                <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-gray-900/90 px-3 py-2 rounded shadow-lg">
+                  <div className="flex items-center gap-2 text-xs">
+                    <div className="flex items-center">
+                      <div className="w-12 h-1 bg-black dark:bg-white border-t border-b border-black dark:border-white" />
+                      <div className="w-12 h-1 bg-white dark:bg-black border-t border-b border-black dark:border-white" />
+                    </div>
+                    <span className="font-mono">100m</span>
+                  </div>
+                </div>
+
+                {/* Legend */}
+                <div className="absolute bottom-4 right-4 bg-white/95 dark:bg-gray-900/95 p-4 rounded-lg shadow-lg backdrop-blur-sm">
+                  <h4 className="text-sm font-semibold mb-3">Nursery Sections</h4>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex items-center gap-2">
+                      <svg width="16" height="20" viewBox="0 0 24 30">
+                        <path d="M12 0C7.589 0 4 3.589 4 8c0 5.5 8 14 8 14s8-8.5 8-14c0-4.411-3.589-8-8-8z" fill="#22c55e" />
+                        <circle cx="12" cy="8" r="3" fill="white" />
+                      </svg>
+                      <span>North Section (5 beds)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <svg width="16" height="20" viewBox="0 0 24 30">
+                        <path d="M12 0C7.589 0 4 3.589 4 8c0 5.5 8 14 8 14s8-8.5 8-14c0-4.411-3.589-8-8-8z" fill="#f97316" />
+                        <circle cx="12" cy="8" r="3" fill="white" />
+                      </svg>
+                      <span>South Section (5 beds)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <svg width="16" height="20" viewBox="0 0 24 30">
+                        <path d="M12 0C7.589 0 4 3.589 4 8c0 5.5 8 14 8 14s8-8.5 8-14c0-4.411-3.589-8-8-8z" fill="#a855f7" />
+                        <circle cx="12" cy="8" r="3" fill="white" />
+                      </svg>
+                      <span>East Greenhouse (5 beds)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <svg width="16" height="20" viewBox="0 0 24 30">
+                        <path d="M12 0C7.589 0 4 3.589 4 8c0 5.5 8 14 8 14s8-8.5 8-14c0-4.411-3.589-8-8-8z" fill="#3b82f6" />
+                        <circle cx="12" cy="8" r="3" fill="white" />
+                      </svg>
+                      <span>West Field (4 beds)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Analytics Graphs */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

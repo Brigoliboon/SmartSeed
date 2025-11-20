@@ -30,7 +30,7 @@ export function MobileNav({ currentPage, onNavigate, user, onSignOut }: MobileNa
       <div className="sticky top-0 z-50 bg-white border-b shadow-sm">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
-            <img src="/Smartseed.png" alt="Smartseed" className="w-8 h-8 object-contain" />
+            <img src="/logo.png" alt="Smartseed" className="w-8 h-8 object-contain" />
             <div>
               <h1 className="text-lg font-bold">Smartseed</h1>
               <p className="text-xs text-muted-foreground">Nursery Management</p>
